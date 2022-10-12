@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -59,6 +59,25 @@ const Login = (props) => {
       passwordState.isValid && emailState.isValid
     );
   };
+
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
+  useEffect(() => {
+    console.log("use effect");
+    var timerIdentifier = setTimeout(() => {
+      console.log("Checking validation");
+      setFormIsValid(
+        emailIsValid && passwordIsValid
+      );
+    }, 500);
+
+    return () => {
+      console.log("cleanup function");
+      clearTimeout(timerIdentifier);
+    };
+
+  }, [emailIsValid, passwordIsValid]);
 
   const validateEmailHandler = () => {
     dispatchEmail({ type: 'INPUT_BLUR' });
