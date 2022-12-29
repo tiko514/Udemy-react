@@ -2,10 +2,9 @@ import { useReducer } from "react";
 import CartContext from "./cart-context"
 
 const cartReducer = (state, action) => {
+    let newStateItems;
     if (action.type === 'ADD') {
-        let newStateItems;
-
-        const existingItemIndex = state.items.findIndex(item => item.id == action.item.id);
+        const existingItemIndex = state.items.findIndex(item => item.id === action.item.id);
         const existingItem = state.items[existingItemIndex];
 
         if (existingItem) {
@@ -23,6 +22,31 @@ const cartReducer = (state, action) => {
         }
 
         const newTotalAmount = state.totalAmount + action.item.price * action.item.amount;
+
+        return {
+            items: newStateItems,
+            totalAmount: newTotalAmount
+        }
+    }
+    else if (action.type === 'REMOVE') {
+        const existingItemIndex = state.items.findIndex(item => item.id === action.id);
+        const existingItem = state.items[existingItemIndex];
+
+        if (existingItem.amount === 1) {
+            newStateItems = state.items.filter(item => item.id !== action.id);
+        }
+        else {
+            newStateItems = [
+                ...state.items
+            ];
+
+            newStateItems[existingItemIndex] = {
+                ...existingItem,
+                amount: existingItem.amount - 1
+            }
+        }
+
+        const newTotalAmount = state.totalAmount - existingItem.price;
 
         return {
             items: newStateItems,
