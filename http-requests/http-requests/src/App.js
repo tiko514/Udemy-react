@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import MoviesList from './components/MoviesList';
 import './App.css';
+import AddMovie from './components/AddMovie';
 
 function App() {
 
@@ -14,23 +15,25 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch("https://swapi.py4e.com/api/films/");
+      const response = await fetch("https://react-http-d7861-default-rtdb.europe-west1.firebasedatabase.app/movies.json");
       if (!response.ok) {
         throw new Error("Something went wrong...");
       }
 
       const data = await response.json();
 
-      const transformedMovies = data.results.map((item) => {
-        return {
-          id: item.episode_id,
-          title: item.title,
-          openingText: item.opening_crawl,
-          releaseDate: item.release_date
-        }
-      });
+      const loadedMovies = [];
 
-      setMovies(transformedMovies);
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate
+        });
+      }
+
+      setMovies(loadedMovies);
     }
     catch (error) {
       setError(error.message)
@@ -41,6 +44,19 @@ function App() {
   useEffect(() => {
     fetchMovieHandler();
   }, [fetchMovieHandler]);
+
+  async function addMovieHandler(movie) {
+    var response = await fetch('https://react-http-d7861-default-rtdb.europe-west1.firebasedatabase.app/movies.json',
+      {
+        method: "POST",
+        body: JSON.stringify(movie),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+    fetchMovieHandler();
+  }
 
   let content = <p>Found no movies</p>;
 
@@ -58,6 +74,9 @@ function App() {
 
   return (
     <React.Fragment>
+      <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
