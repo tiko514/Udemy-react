@@ -15,7 +15,7 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch("https://react-http-d7861-default-rtdb.europe-west1.firebasedatabase.app/movies.json");
+      const response = await fetch("https://react-http-d7861-default-rtdb.europe-west1.firebasedatabase.app/movies.json", null);
       if (!response.ok) {
         throw new Error("Something went wrong...");
       }

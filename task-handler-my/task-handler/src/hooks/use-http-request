@@ -1,0 +1,46 @@
+import { useCallback, useState } from "react";
+
+const useHttpRequest = (responseDataHandler, method, body, headers) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const requestMethod = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            var requestInit = null;
+
+            if (method === 'POST') {
+                requestInit = {
+                    method: method,
+                    body: JSON.stringify(body),
+                    headers: headers
+                }
+            }
+
+            const response = await fetch(
+                'https://react-http-d7861-default-rtdb.europe-west1.firebasedatabase.app/tasks.json',
+                requestInit
+            );
+
+            if (!response.ok) {
+                throw new Error('Request failed!');
+            }
+
+            const data = await response.json();
+
+            responseDataHandler(data);
+        } catch (err) {
+            setError(err.message || 'Something went wrong!');
+        }
+        setIsLoading(false);
+    }, [method, body, headers, responseDataHandler]);
+
+    return {
+        requestMethod,
+        error,
+        isLoading
+    };
+}
+
+export default useHttpRequest;

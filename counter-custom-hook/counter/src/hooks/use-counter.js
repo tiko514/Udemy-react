@@ -9,7 +9,7 @@ function useCounter(step) {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [step]);
 
     return counter;
 }
