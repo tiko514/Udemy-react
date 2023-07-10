@@ -30,6 +30,13 @@ function App() {
     setTasks((prevTasks) => prevTasks.concat(task));
   };
 
+  function logPerson(Person) {
+    console.log(Person.Name);
+    console.log(Person.Age);
+  };
+
+  logPerson({ Name: "aaa", Age: 15 });
+
   return (
     <React.Fragment>
       <NewTask onAddTask={taskAddHandler} />
